@@ -1,9 +1,8 @@
 package main
 
 import (
-	"LibraryDB/internal" // Adjust import path to match your project structure
+	"LibraryDB/internal"
 	"context"
-	"fmt"
 	"log"
 )
 
@@ -21,13 +20,4 @@ func main() {
 			log.Printf("Error closing database connection: %v", err)
 		}
 	}()
-
-	// Initialize tables and insert data
-	if err := internal.InitializeTables(conn); err != nil {
-		log.Fatalf("Failed to initialize tables and insert data: %v\n", err)
-		return
-	}
-
-	// If initialization is successful
-	fmt.Println("Database tables initialized and data inserted successfully!")
 }
