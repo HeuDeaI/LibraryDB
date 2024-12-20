@@ -1,20 +1,18 @@
 package main
 
 import (
-	"LibraryDB/internal"
 	"context"
 	"log"
+
+	"github.com/jackc/pgx/v5"
 )
 
 func main() {
-	// Establish connection to the database
-	conn, err := internal.Connect()
+	conn, err := pgx.Connect(context.Background(), "postgres:///library")
 	if err != nil {
-		log.Fatalf("Failed to connect to the database: %v\n", err)
-		return
+		log.Fatalf("Unable to connect to database: %v", err)
 	}
 
-	// Ensure that the connection is closed after all operations are complete
 	defer func() {
 		if err := conn.Close(context.Background()); err != nil {
 			log.Printf("Error closing database connection: %v", err)
