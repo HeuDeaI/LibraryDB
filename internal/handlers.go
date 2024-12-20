@@ -8,6 +8,61 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+type BookWithAuthors struct {
+	BookID          int      `json:"book_id"`
+	Title           string   `json:"title"`
+	PublicationYear int      `json:"publication_year"`
+	Genre           string   `json:"genre"`
+	Authors         []string `json:"authors"`
+}
+
+func GetBooksWithAuthors(c *gin.Context, dbPool *pgxpool.Pool) {
+	query := `
+		SELECT 
+			b.book_id, b.title, b.publication_year, b.genre, 
+			STRING_AGG(a.first_name || ' ' || a.last_name, ', ') AS authors
+		FROM 
+			book AS b
+		LEFT JOIN 
+			bookauthor AS ba ON b.book_id = ba.book_id
+		LEFT JOIN 
+			author AS a ON ba.author_id = a.author_id
+		GROUP BY 
+			b.book_id
+		ORDER BY 
+			b.title;
+	`
+
+	rows, err := dbPool.Query(c, query)
+	if err != nil {
+		log.Printf("Error fetching books with authors: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+	defer rows.Close()
+
+	var books []BookWithAuthors
+	for rows.Next() {
+		var book BookWithAuthors
+		var authors string
+		if err := rows.Scan(&book.BookID, &book.Title, &book.PublicationYear, &book.Genre, &authors); err != nil {
+			log.Printf("Error scanning book with authors: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+			return
+		}
+		book.Authors = append(book.Authors, authors)
+		books = append(books, book)
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Printf("Error iterating over rows: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, books)
+}
+
 func GetBooks(c *gin.Context, dbPool *pgxpool.Pool) {
 	rows, err := dbPool.Query(c, "SELECT book_id, title, publication_year, genre FROM book")
 	if err != nil {

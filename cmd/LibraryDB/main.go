@@ -29,6 +29,7 @@ func main() {
 	r.GET("/readers", func(c *gin.Context) { internal.GetReaders(c, dbPool) })
 	r.GET("/book-authors", func(c *gin.Context) { internal.GetBookAuthors(c, dbPool) })
 	r.GET("/loans", func(c *gin.Context) { internal.GetLoans(c, dbPool) })
+	r.GET("/books-with-authors", func(c *gin.Context) { internal.GetBooksWithAuthors(c, dbPool) })
 
 	r.Run(":8080")
 }
