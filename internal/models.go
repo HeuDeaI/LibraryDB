@@ -20,6 +20,14 @@ type BookAuthor struct {
 	AuthorID int `json:"author_id"`
 }
 
+type BookWithAuthors struct {
+	BookID          int      `json:"book_id"`
+	Title           string   `json:"title"`
+	PublicationYear int      `json:"publication_year"`
+	Genre           string   `json:"genre"`
+	Authors         []string `json:"authors"`
+}
+
 type Reader struct {
 	ReaderID    int    `json:"reader_id"`
 	FirstName   string `json:"first_name"`

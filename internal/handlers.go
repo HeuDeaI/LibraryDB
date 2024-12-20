@@ -8,19 +8,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type BookWithAuthors struct {
-	BookID          int      `json:"book_id"`
-	Title           string   `json:"title"`
-	PublicationYear int      `json:"publication_year"`
-	Genre           string   `json:"genre"`
-	Authors         []string `json:"authors"`
-}
-
 func GetBooksWithAuthors(c *gin.Context, dbPool *pgxpool.Pool) {
 	query := `
 		SELECT 
 			b.book_id, b.title, b.publication_year, b.genre, 
-			COALESCE(STRING_AGG(a.first_name || ' ' || a.last_name, ', '), '') AS authors
+			COALESCE(STRING_AGG(a.first_name || ' ' || a.last_name, ', '), 'Author unknown') AS authors
 		FROM 
 			book AS b
 		LEFT JOIN 
@@ -30,7 +22,7 @@ func GetBooksWithAuthors(c *gin.Context, dbPool *pgxpool.Pool) {
 		GROUP BY 
 			b.book_id
 		ORDER BY 
-			b.title;
+			b.book_id;
 	`
 
 	rows, err := dbPool.Query(c, query)

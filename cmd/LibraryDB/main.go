@@ -20,15 +20,12 @@ func main() {
 
 	r := gin.Default()
 
+	r.Static("/static", "./static")
 	r.LoadHTMLGlob("templates/*.html")
+
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
-	r.GET("/books", func(c *gin.Context) { internal.GetBooks(c, dbPool) })
-	r.GET("/authors", func(c *gin.Context) { internal.GetAuthors(c, dbPool) })
-	r.GET("/readers", func(c *gin.Context) { internal.GetReaders(c, dbPool) })
-	r.GET("/book-authors", func(c *gin.Context) { internal.GetBookAuthors(c, dbPool) })
-	r.GET("/loans", func(c *gin.Context) { internal.GetLoans(c, dbPool) })
 	r.GET("/books-with-authors", func(c *gin.Context) { internal.GetBooksWithAuthors(c, dbPool) })
 
 	r.Run(":8080")
