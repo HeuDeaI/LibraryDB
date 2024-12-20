@@ -3,26 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Books</title>
+    <title>Book-Authors</title>
 </head>
 <body>
-    <h1>Books</h1>
+    <h1>Book-Author Relationships</h1>
     <table border="1">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Publication Year</th>
-                <th>Genre</th>
+                <th>Book ID</th>
+                <th>Author ID</th>
             </tr>
         </thead>
         <tbody>
-            {{range .Books}}
+            {{range .BookAuthors}}
             <tr>
                 <td>{{.BookID}}</td>
-                <td>{{.Title}}</td>
-                <td>{{.PublicationYear}}</td>
-                <td>{{.Genre}}</td>
+                <td>{{.AuthorID}}</td>
             </tr>
             {{end}}
         </tbody>

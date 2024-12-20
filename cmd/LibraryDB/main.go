@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	dbURL := "postgres://heudeai:@localhost:5432/library?sslmode=disable"
+	dbURL := "postgres:///library"
 	dbPool, err := pgxpool.New(context.Background(), dbURL)
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v", err)
@@ -25,5 +25,10 @@ func main() {
 		c.String(http.StatusOK, "Library Management System")
 	})
 	r.GET("/books", func(c *gin.Context) { internal.GetBooks(c, dbPool) })
+	r.GET("/authors", func(c *gin.Context) { internal.GetAuthors(c, dbPool) })
+	r.GET("/readers", func(c *gin.Context) { internal.GetReaders(c, dbPool) })
+	r.GET("/book-authors", func(c *gin.Context) { internal.GetBookAuthors(c, dbPool) })
+	r.GET("/loans", func(c *gin.Context) { internal.GetLoans(c, dbPool) })
+
 	r.Run(":8080")
 }
