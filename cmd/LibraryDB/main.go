@@ -19,7 +19,6 @@ func main() {
 	defer dbPool.Close()
 
 	r := gin.Default()
-
 	r.Static("/static", "./static")
 	r.LoadHTMLGlob("templates/*.html")
 
