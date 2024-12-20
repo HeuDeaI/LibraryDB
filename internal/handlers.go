@@ -20,7 +20,7 @@ func GetBooksWithAuthors(c *gin.Context, dbPool *pgxpool.Pool) {
 	query := `
 		SELECT 
 			b.book_id, b.title, b.publication_year, b.genre, 
-			STRING_AGG(a.first_name || ' ' || a.last_name, ', ') AS authors
+			COALESCE(STRING_AGG(a.first_name || ' ' || a.last_name, ', '), '') AS authors
 		FROM 
 			book AS b
 		LEFT JOIN 
