@@ -22,7 +22,7 @@ func main() {
 
 	r.LoadHTMLGlob("templates/*.html")
 	r.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "Library Management System")
+		c.HTML(http.StatusOK, "index.html", nil)
 	})
 	r.GET("/books", func(c *gin.Context) { internal.GetBooks(c, dbPool) })
 	r.GET("/authors", func(c *gin.Context) { internal.GetAuthors(c, dbPool) })
