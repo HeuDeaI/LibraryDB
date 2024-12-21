@@ -83,3 +83,65 @@ func GetBook(c *gin.Context, dbPool *pgxpool.Pool) {
 	book.Authors = append(book.Authors, authors)
 	c.JSON(http.StatusOK, book)
 }
+func LoanBook(c *gin.Context, dbPool *pgxpool.Pool) {
+	readerData := struct {
+		FirstName string `json:"first_name"`
+		LastName  string `json:"last_name"`
+		Phone     string `json:"phone_number"`
+		Email     string `json:"email"`
+		BookID    string `json:"book_id"`
+	}{}
+
+	if err := c.ShouldBindJSON(&readerData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	tx, err := dbPool.Begin(c)
+	if err != nil {
+		log.Printf("Error starting transaction: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+	defer tx.Rollback(c)
+
+	var readerID int
+	err = tx.QueryRow(c, `
+        SELECT reader_id FROM Reader 
+        WHERE first_name=$1 AND last_name=$2 AND email=$3`,
+		readerData.FirstName, readerData.LastName, readerData.Email,
+	).Scan(&readerID)
+
+	if err != nil { // Reader doesn't exist; insert them.
+		err = tx.QueryRow(c, `
+            INSERT INTO Reader (first_name, last_name, phone_number, email)
+            VALUES ($1, $2, $3, $4) RETURNING reader_id`,
+			readerData.FirstName, readerData.LastName, readerData.Phone, readerData.Email,
+		).Scan(&readerID)
+
+		if err != nil {
+			log.Printf("Error adding reader: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+			return
+		}
+	}
+
+	_, err = tx.Exec(c, `
+        INSERT INTO Loan (book_id, reader_id, issue_date, return_date)
+        VALUES ($1, $2, CURRENT_DATE, CURRENT_DATE + INTERVAL '7 days')`,
+		readerData.BookID, readerID,
+	)
+	if err != nil {
+		log.Printf("Error adding loan: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	if err = tx.Commit(c); err != nil {
+		log.Printf("Error committing transaction: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Book loaned successfully"})
+}

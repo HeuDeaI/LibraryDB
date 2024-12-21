@@ -13,7 +13,21 @@
     </header>
     <main>
         <div id="book-details"></div>
-        <a href="/" class="back-link">Back to Library</a>
+        <button id="open-loan-form" class="loan-book-btn">Loan Book</button>
+        
+        <div id="loan-form-container" class="hidden">
+            <form id="loan-form">
+                <h3>Loan Book</h3>
+                <input type="text" name="first_name" placeholder="First Name" required />
+                <input type="text" name="last_name" placeholder="Last Name" required />
+                <input type="text" name="phone_number" placeholder="Phone Number" />
+                <input type="email" name="email" placeholder="Email" required />
+                <button type="submit">Loan Book</button>
+            </form>
+            <button id="close-loan-form" class="close-btn">Close</button>
+        </div>
+    
+        <a href="/" class="back-link bottom-link">Back to Library</a>
     </main>    
     <footer>
         <p>Library © 2024</p>
