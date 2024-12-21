@@ -224,53 +224,11 @@ form button:hover {
     flex-direction: column;
     justify-content: center;
     gap: 10px;
-}
-
-.custom-alert .alert-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #d6b384;
-    padding-bottom: 10px;
-}
-
-.custom-alert .alert-header h4 {
-    font-size: 1.5rem;
-    color: #6b4226;
-    font-family: 'Merriweather', serif;
+    opacity: 1;
 }
 
 .custom-alert .alert-body {
     font-size: 1.1rem;
     color: #4b3e3a;
     font-family: 'Georgia', serif;
-}
-
-.custom-alert .close-alert-btn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: #6b4226;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.custom-alert .close-alert-btn:hover {
-    color: #b77f4e;
-}
-
-.custom-alert.info {
-    border-color: #d6b384;
-}
-
-.custom-alert.warning {
-    border-color: #f1d3a1;
-}
-
-.custom-alert.success {
-    border-color: #5a8f52;
-}
-
-.custom-alert.error {
-    border-color: #e44d38;
 }

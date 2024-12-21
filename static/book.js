@@ -93,14 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function showAlert(message, type = 'info') {
+function showAlert(message) {
     const alertContainer = document.createElement('div');
-    alertContainer.className = `custom-alert ${type}`;
+    alertContainer.className = `custom-alert`;
+    alertContainer.setAttribute('aria-live', 'assertive');
     alertContainer.innerHTML = `
-        <div class="alert-header">
-            <h4>${type.toUpperCase()}</h4>
-            <button class="close-alert-btn">&times;</button>
-        </div>
         <div class="alert-body">
             <p>${message}</p>
         </div>
@@ -108,12 +105,9 @@ function showAlert(message, type = 'info') {
 
     document.body.appendChild(alertContainer);
 
-    const closeButton = alertContainer.querySelector('.close-alert-btn');
-    closeButton.addEventListener('click', () => {
-        alertContainer.remove();
-    });
-
     setTimeout(() => {
-        alertContainer.remove();
-    }, 5000);
+        alertContainer.style.opacity = '0';
+        alertContainer.style.transition = 'opacity 0.5s';
+        setTimeout(() => alertContainer.remove(), 500);
+    }, 2000);
 }
