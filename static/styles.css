@@ -51,26 +51,45 @@ main h2 {
 
 #books-list table {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 #books-list table th, #books-list table td {
-    border: 1px solid #c89d74;
-    padding: 10px;
+    padding: 15px;
     text-align: left;
     font-family: 'Georgia', serif;
+    font-size: 1rem;
 }
 
 #books-list table th {
     background-color: #d6b384;
     color: #fff;
     font-weight: bold;
+    text-transform: uppercase;
+    border-bottom: 2px solid #c89d74;
 }
 
-#books-list table tr:hover {
+#books-list table td {
+    background-color: #fff8e7;
+    border-bottom: 1px solid #c89d74;
+}
+
+#books-list table tr:nth-child(odd) td {
+    background-color: #fdf1dc;
+}
+
+#books-list table tr:hover td {
     background-color: #f1d3a1;
     transition: background 0.3s ease;
+}
+
+#books-list table tr:last-child td {
+    border-bottom: none;
 }
 
 footer {
@@ -107,4 +126,5 @@ button {
 button:hover {
     background-color: #b77f4e;
 }
+
 

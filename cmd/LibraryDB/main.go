@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"LibraryDB/internal"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -30,6 +31,10 @@ func main() {
 	r.POST("/loan-book", func(c *gin.Context) { internal.LoanBook(c, dbPool) })
 	r.GET("/readers", func(c *gin.Context) { internal.GetReaders(c, dbPool) })
 	r.GET("/loans", func(c *gin.Context) { internal.GetLoans(c, dbPool) })
+	r.GET("/book/:bookID", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "book.html", nil)
+	})
+	r.GET("/book-data/:bookID", func(c *gin.Context) { internal.GetBook(c, dbPool) })
 
 	r.Run(":8080")
 }
