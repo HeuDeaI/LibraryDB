@@ -84,14 +84,7 @@ func GetBook(c *gin.Context, dbPool *pgxpool.Pool) {
 	c.JSON(http.StatusOK, book)
 }
 func LoanBook(c *gin.Context, dbPool *pgxpool.Pool) {
-	readerData := struct {
-		FirstName string `json:"first_name"`
-		LastName  string `json:"last_name"`
-		Phone     string `json:"phone_number"`
-		Email     string `json:"email"`
-		BookID    string `json:"book_id"`
-	}{}
-
+	var readerData LoanRequest
 	if err := c.ShouldBindJSON(&readerData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
 		return

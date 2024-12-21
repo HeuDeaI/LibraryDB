@@ -43,3 +43,11 @@ type Loan struct {
 	IssueDate  time.Time  `json:"issue_date"`
 	ReturnDate *time.Time `json:"return_date"`
 }
+
+type LoanRequest struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Phone     string `json:"phone_number"`
+	Email     string `json:"email"`
+	BookID    string `json:"book_id"`
+}
