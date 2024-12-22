@@ -9,7 +9,7 @@ async function fetchBookDetails(bookId) {
             <h2>${book.title}</h2>
             <p><strong>Publication Year:</strong> ${book.publication_year}</p>
             <p><strong>Genre:</strong> ${book.genre}</p>
-            <p><strong>Authors:</strong> ${book.authors || 'Author unknown'}</p>
+            <p><strong>Author:</strong> ${book.authors || 'Author unknown'}</p>
         `;
     } catch (error) {
         console.error(`Error fetching book details: ${error}`);
