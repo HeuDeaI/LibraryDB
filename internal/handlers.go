@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"bytes"
 	"io"
 	"log"
 	"net/http"
@@ -143,7 +144,7 @@ func LoanBook(c *gin.Context, dbPool *pgxpool.Pool) {
 func AddBook(c *gin.Context, dbPool *pgxpool.Pool) {
 	var bookData BookData
 	body, _ := io.ReadAll(c.Request.Body)
-	log.Printf("Raw body: %s", string(body))
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 	if err := c.ShouldBindJSON(&bookData); err != nil {
 		log.Printf("Error binding JSON: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
