@@ -9,6 +9,11 @@ type Book struct {
 	Genre           string `json:"genre"`
 }
 
+type BookTitle struct {
+	BookID int    `json:"book_id"`
+	Title  string `json:"title"`
+}
+
 type Author struct {
 	AuthorID  int    `json:"author_id"`
 	FirstName string `json:"first_name"`

@@ -4,6 +4,7 @@ document.getElementById('add-author').addEventListener('click', () => {
     const authorsDiv = document.getElementById('authors');
     const index = authorsDiv.children.length;
     const newAuthor = document.createElement('div');
+    newAuthor.className = 'author-group';
     newAuthor.innerHTML = `
         <input type="text" name="authors[${index}][first_name]" placeholder="Author First Name" required>
         <input type="text" name="authors[${index}][last_name]" placeholder="Author Last Name" required>
@@ -37,7 +38,6 @@ document.getElementById('add-book-form').addEventListener('submit', async (e) =>
         const result = await response.json();
         if (response.ok) {
             showAlert(result.message || 'Book added successfully!');
-            window.location.href = '/';
         } else {
             showAlert(result.error || 'Failed to add book.');
         }

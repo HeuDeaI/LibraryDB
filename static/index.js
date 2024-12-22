@@ -1,10 +1,8 @@
-const API_ENDPOINTS = {
-    books: '/books-with-authors',
-};
+const API_ENDPOINTS = '/books';
 
-async function fetchBooksWithAuthors() {
+async function fetchBooks() {
     try {
-        const books = await fetch(API_ENDPOINTS.books).then(res => res.json());
+        const books = await fetch(API_ENDPOINTS).then(res => res.json());
         const booksList = document.getElementById('books-list');
         booksList.innerHTML = books.map(book => `
             <p>
@@ -18,4 +16,4 @@ async function fetchBooksWithAuthors() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', fetchBooksWithAuthors);
+document.addEventListener('DOMContentLoaded', fetchBooks);

@@ -10,41 +10,27 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func GetBooksWithAuthors(c *gin.Context, dbPool *pgxpool.Pool) {
-	query := `
-		SELECT 
-			b.book_id, b.title, b.publication_year, b.genre, 
-			COALESCE(STRING_AGG(a.first_name || ' ' || a.last_name, ', '), 'Author unknown') AS authors
-		FROM 
-			book AS b
-		LEFT JOIN 
-			bookauthor AS ba ON b.book_id = ba.book_id
-		LEFT JOIN 
-			author AS a ON ba.author_id = a.author_id
-		GROUP BY 
-			b.book_id
-		ORDER BY 
-			b.book_id;
+func GetBooks(c *gin.Context, dbPool *pgxpool.Pool) {
+	query := ` 
+		SELECT book_id, title FROM book;
 	`
 
 	rows, err := dbPool.Query(c, query)
 	if err != nil {
-		log.Printf("Error fetching books with authors: %v", err)
+		log.Printf("Error fetching books: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
 	}
 	defer rows.Close()
 
-	var books []BookWithAuthors
+	var books []BookTitle
 	for rows.Next() {
-		var book BookWithAuthors
-		var authors string
-		if err := rows.Scan(&book.BookID, &book.Title, &book.PublicationYear, &book.Genre, &authors); err != nil {
-			log.Printf("Error scanning book with authors: %v", err)
+		var book BookTitle
+		if err := rows.Scan(&book.BookID, &book.Title); err != nil {
+			log.Printf("Error scanning book: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}
-		book.Authors = append(book.Authors, authors)
 		books = append(books, book)
 	}
 
@@ -85,6 +71,7 @@ func GetBook(c *gin.Context, dbPool *pgxpool.Pool) {
 	book.Authors = append(book.Authors, authors)
 	c.JSON(http.StatusOK, book)
 }
+
 func LoanBook(c *gin.Context, dbPool *pgxpool.Pool) {
 	var readerData LoanRequest
 	if err := c.ShouldBindJSON(&readerData); err != nil {
@@ -163,16 +150,23 @@ func AddBook(c *gin.Context, dbPool *pgxpool.Pool) {
 	for _, author := range bookData.Authors {
 		var authorID int
 		err := tx.QueryRow(c, `
-			INSERT INTO Author (first_name, last_name)
-			VALUES ($1, $2)
-			ON CONFLICT (first_name, last_name) DO UPDATE SET first_name = EXCLUDED.first_name
-			RETURNING author_id`,
+			SELECT author_id FROM Author 
+			WHERE first_name = $1 AND last_name = $2`,
 			author.FirstName, author.LastName,
 		).Scan(&authorID)
+
 		if err != nil { // Author doesn't exist; insert them.
-			log.Printf("Error inserting author: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
-			return
+			err = tx.QueryRow(c, `
+				INSERT INTO Author (first_name, last_name)
+				VALUES ($1, $2) RETURNING author_id`,
+				author.FirstName, author.LastName,
+			).Scan(&authorID)
+
+			if err != nil {
+				log.Printf("Error adding author: %v", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+				return
+			}
 		}
 		authorIDs = append(authorIDs, authorID)
 	}

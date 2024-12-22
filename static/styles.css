@@ -233,16 +233,6 @@ form button:hover {
     font-family: 'Georgia', serif;
 }
 
-.form-container {
-    background: #fff8e7;
-    padding: 30px;
-    border: 2px solid #d6b384;
-    border-radius: 10px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-    width: 40%;
-    margin: 0 auto;
-}
-
 form h2 {
     margin-bottom: 20px;
     font-family: 'Merriweather', serif;
