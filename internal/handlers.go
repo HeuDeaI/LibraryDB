@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"io"
 	"log"
 	"net/http"
 
@@ -137,4 +138,75 @@ func LoanBook(c *gin.Context, dbPool *pgxpool.Pool) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Book loaned successfully"})
+}
+
+func AddBook(c *gin.Context, dbPool *pgxpool.Pool) {
+	var bookData BookData
+	body, _ := io.ReadAll(c.Request.Body)
+	log.Printf("Raw body: %s", string(body))
+	if err := c.ShouldBindJSON(&bookData); err != nil {
+		log.Printf("Error binding JSON: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	tx, err := dbPool.Begin(c)
+	if err != nil {
+		log.Printf("Error starting transaction: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+	defer tx.Rollback(c)
+
+	var authorIDs []int
+	for _, author := range bookData.Authors {
+		var authorID int
+		err := tx.QueryRow(c, `
+			INSERT INTO Author (first_name, last_name)
+			VALUES ($1, $2)
+			ON CONFLICT (first_name, last_name) DO UPDATE SET first_name = EXCLUDED.first_name
+			RETURNING author_id`,
+			author.FirstName, author.LastName,
+		).Scan(&authorID)
+		if err != nil { // Author doesn't exist; insert them.
+			log.Printf("Error inserting author: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+			return
+		}
+		authorIDs = append(authorIDs, authorID)
+	}
+
+	var bookID int
+	err = tx.QueryRow(c, `
+		INSERT INTO Book (title, publication_year, genre)
+		VALUES ($1, $2, $3)
+		RETURNING book_id`,
+		bookData.Title, bookData.PublicationYear, bookData.Genre,
+	).Scan(&bookID)
+	if err != nil {
+		log.Printf("Error inserting book: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	for _, authorID := range authorIDs {
+		_, err := tx.Exec(c, `
+			INSERT INTO BookAuthor (book_id, author_id)
+			VALUES ($1, $2)`,
+			bookID, authorID,
+		)
+		if err != nil {
+			log.Printf("Error linking book and author: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+			return
+		}
+	}
+
+	if err = tx.Commit(c); err != nil {
+		log.Printf("Error committing transaction: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Book added successfully", "book_id": bookID})
 }

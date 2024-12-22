@@ -34,6 +34,10 @@ func main() {
 	})
 	r.GET("/book-data/:bookID", func(c *gin.Context) { internal.GetBook(c, dbPool) })
 	r.POST("/loan-book", func(c *gin.Context) { internal.LoanBook(c, dbPool) })
+	r.GET("/add-book", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "add_book.html", nil)
+	})
+	r.POST("/add-book", func(c *gin.Context) { internal.AddBook(c, dbPool) })
 
 	r.Run(":8080")
 }

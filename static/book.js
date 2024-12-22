@@ -83,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 showAlert(result.message || 'Book loaned successfully!');
                 loanFormContainer.classList.add('hidden');
+                window.location.href = '/';
             } else {
                 showAlert(result.error || 'Failed to loan book.');
             }

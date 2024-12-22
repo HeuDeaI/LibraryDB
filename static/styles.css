@@ -232,3 +232,36 @@ form button:hover {
     color: #4b3e3a;
     font-family: 'Georgia', serif;
 }
+
+.form-container {
+    background: #fff8e7;
+    padding: 30px;
+    border: 2px solid #d6b384;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    width: 40%;
+    margin: 0 auto;
+}
+
+form h2 {
+    margin-bottom: 20px;
+    font-family: 'Merriweather', serif;
+    color: #6b4226;
+}
+
+.author-group {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.add-author-btn {
+    background-color: #6b4226;
+    color: #fff;
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+
+.add-author-btn:hover {
+    background-color: #5a3621;
+}

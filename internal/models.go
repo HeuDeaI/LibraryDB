@@ -51,3 +51,13 @@ type LoanRequest struct {
 	Email     string `json:"email"`
 	BookID    string `json:"book_id"`
 }
+
+type BookData struct {
+	Title           string `json:"title"`
+	PublicationYear int    `json:"publication_year"`
+	Genre           string `json:"genre"`
+	Authors         []struct {
+		FirstName string `json:"first_name"`
+		LastName  string `json:"last_name"`
+	} `json:"authors"`
+}
